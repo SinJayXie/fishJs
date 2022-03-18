@@ -1,8 +1,7 @@
-import { ServerResponse } from 'http';
 import { FishRequest } from '../index';
 import * as fs from 'fs';
-import { StreamOptions } from 'stream';
 import { CreateReadStreamOptions } from 'fs/promises';
+import { Data } from 'ejs';
 
 class R {
     private data: {};
@@ -13,6 +12,12 @@ class R {
     public __setRes__ = (res: FishRequest) => {
         this.fishBase = res;
     }
+
+    public render = async (data: Data) => {
+        this.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return await this.fishBase.templateEngine.render(data, this.fishBase.httpRes);
+    }
+
     public wait = () => {
         return '__wait_process__';
     }

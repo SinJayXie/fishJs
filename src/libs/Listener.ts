@@ -7,6 +7,7 @@ import { ConversionBuffer, getRoute, writeError } from './utils';
 import DbBase from './DbBase';
 import { SqlConnectConfig } from '../config/DbConfig';
 import BodyParser from './BodyParser';
+import AssetsService from './AssetsService';
 
 class Listener {
     private CONFIG: ListenerConfig;
@@ -21,9 +22,11 @@ class Listener {
     public app = async (req: http.IncomingMessage, res: http.ServerResponse) => {
         try {
             this.LOG.print('Request -> ' + req.method + ' ' + req.url);
-            res.setHeader('Content-Type' , 'application/json');
             const bodyData = await BodyParser(req);
-            const fishReq = new FishParse(req, res, this.DBConnect, bodyData).parse(); // fish request class
+            const fishReq = new FishParse(req, res, this.DBConnect, bodyData, this.CONFIG).parse(); // fish request class
+            const assetsService: boolean = new AssetsService(req, res, fishReq).watch();
+            if(assetsService) return;
+            res.setHeader('Content-Type' , 'application/json');
             const route = getRoute(fishReq.path); // match router
             if(route) {
                 const func = this.CONTROLLER_MODULE.getController(route.controller, route.func, fishReq);
@@ -48,6 +51,9 @@ class Listener {
         this.CONFIG = config;
         this.CONTROLLER_MODULE = new ControllerManage(config);
         http.createServer(this.app).listen(config.port || 80, config.host || 'localhost', function () {
+            console.log(` +-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+
+ |F|i|s|h| |J|s| |S|t|a|r|t|u|p|
+ +-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+`);
             console.log(`[Fish.js]: Listening port: ${config.port || 80} host: ${config.host || 'localhost'} http://${config.host || 'localhost'}:${config.port || 80}` );
         });
     }

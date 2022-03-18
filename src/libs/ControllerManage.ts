@@ -28,6 +28,7 @@ class ControllerManage {
 
     public loadModule = () => {
         this.MODULE_LIST.forEach((fileName) => {
+            const date = Date.now();
             const modulePath = path.join(this.CONTROLLER_PATH, fileName);
             if(modulePath.substr(modulePath.length - 3) === '.js') {
                 try {
@@ -36,6 +37,7 @@ class ControllerManage {
                     const moduleFunction = new moduleCache.default();
                     if(moduleFunction.package) {
                         this.MODULE_MAP.set(moduleFunction.package, moduleCache.default);
+                        console.log(`[Import Module]: ${modulePath} -> ${(Date.now() - date)} ms`);
                     }
                 } catch (e) {
                     console.log(e);

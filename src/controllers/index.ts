@@ -13,8 +13,7 @@ class Index extends fish.Controller{
     }
 
     public post = async () => {
-        this.R.setMethod('POST');
-        console.log(this.R.body());
+        this.R.setMethod('GET');
         return this.R.success({ body: this.R.body() });
     }
 
@@ -26,6 +25,10 @@ class Index extends fish.Controller{
     public download = async () => {
         const downPath = '/Users/sinjayxie/Downloads/AltServer.zip';
         return this.R.sendFile(downPath, 'test_file.zip', { highWaterMark: 10 });
+    }
+
+    public render = async () => {
+        return this.R.render({ body: new Date() });
     }
 
     public proxy = async () => {

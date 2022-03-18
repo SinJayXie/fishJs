@@ -143,7 +143,6 @@ module.exports = {
         "no-new-object": "error",
         "no-new-require": "error",
         "no-new-wrappers": "error",
-        "no-octal-escape": "error",
         "no-param-reassign": "off",
         "no-path-concat": "error",
         "no-plusplus": "off",

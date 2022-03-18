@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import DbBase from './libs/DbBase';
 import { ParsedUrlQuery } from 'node:querystring';
+import TemplateBase from './libs/TemplateBase';
 
 interface ListenerConfig {
     port: number,
@@ -16,5 +17,6 @@ interface FishRequest {
     body: any,
     httpReq: IncomingMessage,
     httpRes: ServerResponse,
-    sql: DbBase
+    sql: DbBase,
+    templateEngine: TemplateBase
 }
