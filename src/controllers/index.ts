@@ -1,6 +1,7 @@
 import { fish } from '../libs/FishBase';
 import { FishRequest } from '../index';
 import axios from 'axios';
+import { IndexModel } from './model/index.model';
 
 class Index extends fish.Controller{
     constructor(fish: FishRequest) {
@@ -8,12 +9,15 @@ class Index extends fish.Controller{
         this.package = 'index';
     }
     public index = async () => {
-        const result = await this.R.fishBase.sql.query('show tables', []);
-        return this.R.success(result);
+        const Model = new IndexModel({
+            name: 'test',
+            args: ['a','b']
+        });
+        return this.R.success(Model.build());
     }
 
     public post = async () => {
-        this.R.setMethod('GET');
+        this.R.setMethod('POST');
         return this.R.success({ body: this.R.body() });
     }
 
@@ -23,8 +27,8 @@ class Index extends fish.Controller{
     }
 
     public download = async () => {
-        const downPath = '/Users/sinjayxie/Downloads/AltServer.zip';
-        return this.R.sendFile(downPath, 'test_file.zip', { highWaterMark: 10 });
+        const downPath = '/Users/sinjayxie/Downloads/infinity-2593181.jpg';
+        return this.R.sendFile(downPath, 'test_file.jpg', { highWaterMark: 30 });
     }
 
     public render = async () => {

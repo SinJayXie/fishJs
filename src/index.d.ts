@@ -6,7 +6,11 @@ import TemplateBase from './libs/TemplateBase';
 interface ListenerConfig {
     port: number,
     host: string,
-    path: string
+    path: string,
+    ssl: {
+        key: string,
+        cert: string
+    }
 }
 
 interface FishRequest {

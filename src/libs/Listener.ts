@@ -2,12 +2,14 @@ import { ListenerConfig } from '../index';
 import LogController from './LogController';
 import ControllerManage from './ControllerManage';
 import * as http from 'http';
+import * as https from 'https';
 import FishParse from './FishParse';
 import { ConversionBuffer, getRoute, writeError } from './utils';
 import DbBase from './DbBase';
 import { SqlConnectConfig } from '../config/DbConfig';
 import BodyParser from './BodyParser';
 import AssetsService from './AssetsService';
+import * as fs from 'fs';
 
 class Listener {
     private CONFIG: ListenerConfig;
@@ -22,6 +24,7 @@ class Listener {
     public app = async (req: http.IncomingMessage, res: http.ServerResponse) => {
         try {
             this.LOG.print('Request -> ' + req.method + ' ' + req.url);
+            res.setHeader('Server' , 'FishJs/0.1 ');
             const bodyData = await BodyParser(req);
             const fishReq = new FishParse(req, res, this.DBConnect, bodyData, this.CONFIG).parse(); // fish request class
             const assetsService: boolean = new AssetsService(req, res, fishReq).watch();
@@ -50,12 +53,21 @@ class Listener {
     public start = (config: ListenerConfig) => {
         this.CONFIG = config;
         this.CONTROLLER_MODULE = new ControllerManage(config);
-        http.createServer(this.app).listen(config.port || 80, config.host || 'localhost', function () {
-            console.log(` +-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+
+        console.log(` +-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+
  |F|i|s|h| |J|s| |S|t|a|r|t|u|p|
  +-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+`);
+        http.createServer(this.app).listen(config.port || 80, config.host || 'localhost', function () {
             console.log(`[Fish.js]: Listening port: ${config.port || 80} host: ${config.host || 'localhost'} http://${config.host || 'localhost'}:${config.port || 80}` );
         });
+        if(config.ssl.cert && config.ssl.key) {
+            const httpsOption = {
+                key : fs.readFileSync(config.ssl.key),
+                cert: fs.readFileSync(config.ssl.cert)
+            };
+            https.createServer(httpsOption, this.app).listen(443, '0.0.0.0', () => {
+                console.log('[Fish.js]: Listening port 443 host: 0.0.0.0 https://0.0.0.0');
+            });
+        }
     }
 }
 

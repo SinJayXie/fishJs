@@ -5,7 +5,7 @@ import { ServerResponse } from 'http';
 
 class TemplateBase {
     private readonly _path: string;
-    private errorTemplate: string;
+    private readonly errorTemplate: string;
     constructor(path_: string, route_: string) {
         this._path = path.join(path_, 'views', route_ + '.ejs');
         try {
@@ -26,6 +26,7 @@ class TemplateBase {
             }
         } catch (e) {
             res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 500;
             res.write(await renderHtml(this._path + '\n' + e.message, this.errorTemplate));
             res.end();
             return '__wait_process__';
@@ -38,16 +39,18 @@ async function renderHtml(errText: string, template: string) {
     const errRow: string[] = errText.split('\n');
     const configData: any = {
         errorFile: '',
-        lines: []
+        lines: [],
+        errorTips:''
     };
+    configData.errorTips = errRow[errRow.length - 1];
     errRow.forEach((row, index) => {
         if(index === 0) {
             configData.errorFile = row;
         } else {
             // if(row.indexOf())
-            if(/^\s+[1-9]\d*\|/.exec(row)) {
+            if(/^(.*?)[1-9]\d*\|/.exec(row)) {
                 const line = row.split('| ');
-                configData.lines.push(makeLine(line));
+                configData.lines.push(makeLine(line, configData));
             }
         }
     });
@@ -62,12 +65,16 @@ async function renderHtml(errText: string, template: string) {
     return errText;
 }
 
-function makeLine(line: string[]) {
+function makeLine(line: string[], configData: any) {
     const lineNumber = line[0].replace(/\s+/gm, '');
     line.splice(0,1);
     function formatHTML(str: string) {
         return str.replace(/</gm,'&lt;').replace(/>/gm,'&gt;');
     }
-    return `<div class="rows"><div class="line col">${lineNumber}</div><div><pre>${formatHTML(line.join(''))}</pre></div></div>`;
+    if(lineNumber.indexOf('>>') !== -1) {
+        // Error Line
+        return `<div class="rows error"><div class="line">${lineNumber.replace('>>','')}</div><div><pre>${formatHTML(line.join(''))}<div class="error-tips">Error: ${configData.errorTips}</div></pre></div></div>`;
+    }
+    return `<div class="rows"><div class="line">${lineNumber.replace('>>','')}</div><div><pre>${formatHTML(line.join(''))}</pre></div></div>`;
 }
 export default TemplateBase;

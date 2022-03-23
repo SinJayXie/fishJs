@@ -1,7 +1,7 @@
 import * as mysql from 'mysql';
 class DbBase {
     private readonly _connectConfig: mysql.PoolConfig;
-    private _poolConnect: mysql.Pool;
+    private readonly _poolConnect: mysql.Pool;
     constructor(connectConfig: mysql.PoolConfig) {
         this._connectConfig = connectConfig;
         this._poolConnect = mysql.createPool(this._connectConfig);
@@ -24,6 +24,7 @@ class DbBase {
             throw e.message;
         }
     }
+
 }
 
 export default DbBase;

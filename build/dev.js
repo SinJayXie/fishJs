@@ -7,7 +7,9 @@ tsc.stdout.on('data', (data) => {
     if(data.indexOf('Found 0 errors.') !== -1) {
         console.log('\033[32m ' + data.replace(/\n/gm, '') + ' \033[0m');
         exec('rm -rf ./dist/views');
+        exec('rm -rf ./dist/assets');
         copyIt(path.join(__dirname , '../src/views'), path.join(__dirname, '../dist/views'));
+        copyIt(path.join(__dirname , '../src/assets'), path.join(__dirname, '../dist/assets'));
         createDevProcess();
         return;
     }

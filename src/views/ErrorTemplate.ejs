@@ -5,12 +5,20 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Error ejs - <%= errorFile %></title>
+    <title>Template Error - <%= errorFile %></title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
         .content {
             width: 100%;
             height: 100%;
             padding: 10px;
+            background-color: #2a2a2a;
         }
 
         .rows {
@@ -19,12 +27,41 @@
             display: flex;
             font-size: 16px;
             gap: 10px;
-            background-color: #2a2a2a;
             color: #fff;
+            padding: 5px;
+        }
+
+        .rows .line {
+            width: 60px;
+            text-align: right;
+        }
+
+        .error-tips {
+            font-size: 20px;
+            padding: 10px;
+            color: #ccc;
+        }
+
+        .error {
+            color: #f54504;
+            background-color: #f5450422;
         }
 
         pre {
             margin: 0;
+        }
+
+        .error-file {
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        .footer {
+            text-align: center;
         }
 
 
@@ -32,9 +69,11 @@
 </head>
 <body>
     <div class="content">
+        <div class="error-file"><%= errorFile %></div>
         <% lines.forEach(function(line){ %>
             <%- line %>
         <% }); %>
     </div>
+    <div class="footer">Fish.js Internal Server Error</div>
 </body>
 </html>

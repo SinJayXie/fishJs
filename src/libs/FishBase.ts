@@ -114,12 +114,9 @@ class Controller {
     }
 
 }
-class Model {
 
-}
 const fish = {
-    Controller,
-    Model
+    Controller
 };
 export {
     fish
