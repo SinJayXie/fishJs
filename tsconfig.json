@@ -1,4 +1,5 @@
 {
+    "files": ["src/fish.ts"],
     "compilerOptions": {
         "outDir": "./dist/",
         "sourceMap": false,

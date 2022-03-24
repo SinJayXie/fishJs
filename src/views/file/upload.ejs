@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= title || 'upload' %></title>
+</head>
+<body>
+<input type="file" style="display: none" id="fileInput" >
+<button id="button"><%= placeholder || '请选择文件' %></button>
+</body>
+<script>
+    let file = document.getElementById('fileInput')
+    let button = document.getElementById('button')
+    button.onclick = ev => {
+        file.click()
+    }
+
+    file.onchange = ev => {
+        const files = ev.target.files
+        if(files.length === 1) {
+            uploadFile(files[0])
+        }
+    }
+
+    function uploadFile(file) {
+        let xml = new XMLHttpRequest()
+        xml.open('POST','/file/accept')
+        const formData = new FormData()
+        formData.set('file', file)
+        formData.set('date', Date.now())
+        xml.send(formData)
+        file.files = null
+        xml.onloadend = ev => {
+            try {
+                let data = JSON.parse(xml.response)
+                if(data.code === 200) {
+                    alert('上传完成')
+                } else {
+                    alert(data.msg)
+                }
+            } catch (e) {
+                alert(e.message)
+            } finally {
+                window.location.reload()
+            }
+        }
+    }
+
+</script>
+</html>

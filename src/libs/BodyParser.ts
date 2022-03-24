@@ -46,7 +46,7 @@ function formData(req: IncomingMessage, resolve: any, reject: any) {
         if (error) {
             reject(error);
         } else {
-            resolve({ fields,files });
+            resolve({ fields, files });
         }
     });
 }

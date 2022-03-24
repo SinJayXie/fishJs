@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Api Server",
   "scripts": {
-    "dev": "node ./build/dev.js"
+    "dev": "node ./build/dev.js",
+    "build": "node ./build/build.js"
   },
   "main": "index.js",
   "author": "DISHUYL",
