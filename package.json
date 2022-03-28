@@ -4,6 +4,7 @@
   "description": "Api Server",
   "scripts": {
     "dev": "node ./build/dev.js",
+    "debug": "node ./dist/fish.js",
     "build": "node ./build/build.js"
   },
   "main": "index.js",

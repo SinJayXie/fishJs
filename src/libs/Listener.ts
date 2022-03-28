@@ -10,23 +10,27 @@ import { SqlConnectConfig } from '../config/DbConfig';
 import BodyParser from './BodyParser';
 import AssetsService from './AssetsService';
 import * as fs from 'fs';
+import { Session, SessionController } from './Session';
 
 class Listener {
     private CONFIG: ListenerConfig;
     private LOG: LogController;
     private CONTROLLER_MODULE: ControllerManage;
     private DBConnect: DbBase;
+    private Session: Session;
     constructor() {
         this.LOG = new LogController('FishJs');
         this.DBConnect = new DbBase(SqlConnectConfig);
+        this.Session = new Session({ expire: 1 * 60 * 1000 });
     }
 
     public app = async (req: http.IncomingMessage, res: http.ServerResponse) => {
         try {
             this.LOG.print('Request -> ' + req.method + ' ' + req.url);
             res.setHeader('Server' , 'FishJs/0.1 ');
+            const sessionController: SessionController = this.Session.create(req, res);
             const bodyData = await BodyParser(req);
-            const fishReq = new FishParse(req, res, this.DBConnect, bodyData, this.CONFIG).parse(); // fish request class
+            const fishReq = new FishParse(req, res, this.DBConnect, bodyData, this.CONFIG, sessionController).parse(); // fish request class
             const assetsService: boolean = new AssetsService(req, res, fishReq).watch();
             if(assetsService) return;
             res.setHeader('Content-Type' , 'application/json');

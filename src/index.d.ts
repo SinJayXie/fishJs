@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import DbBase from './libs/DbBase';
 import { ParsedUrlQuery } from 'node:querystring';
 import TemplateBase from './libs/TemplateBase';
+import { SessionController } from './libs/Session';
 
 interface ListenerConfig {
     port: number,
@@ -22,5 +23,6 @@ interface FishRequest {
     httpReq: IncomingMessage,
     httpRes: ServerResponse,
     sql: DbBase,
-    templateEngine: TemplateBase
+    templateEngine: TemplateBase,
+    session: SessionController
 }

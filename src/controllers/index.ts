@@ -13,7 +13,12 @@ class Index extends fish.Controller{
             name: 'test',
             args: ['a','b']
         });
+        this.R.session.setSession('test', Date.now());
         return this.R.success(Model.build());
+    }
+
+    public session = async () => {
+        return this.R.success(this.R.session.getSession('test'));
     }
 
     public post = async () => {

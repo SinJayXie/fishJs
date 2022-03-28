@@ -2,15 +2,20 @@ import { FishRequest } from '../index';
 import * as fs from 'fs';
 import { CreateReadStreamOptions } from 'fs/promises';
 import { Data } from 'ejs';
+import { SessionController } from './Session';
 
 class R {
     private data: {};
-    fishBase: FishRequest;
+    public fishBase: FishRequest;
+    public session: SessionController;
     constructor() {
         this.data = {};
     }
     public __setRes__ = (res: FishRequest) => {
-        this.fishBase = res;
+        if(res) {
+            this.fishBase = res;
+            this.session = res.session;
+        }
     }
 
     public render = async (data: Data) => {

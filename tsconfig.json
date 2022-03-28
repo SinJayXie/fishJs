@@ -2,7 +2,7 @@
     "files": ["src/fish.ts"],
     "compilerOptions": {
         "outDir": "./dist/",
-        "sourceMap": false,
+        "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
         "target": "ES2015",

@@ -3,6 +3,7 @@ import { FishRequest, ListenerConfig } from '../index';
 import * as url from 'url';
 import DbBase from './DbBase';
 import TemplateBase from './TemplateBase';
+import { SessionController } from './Session';
 
 class FishParse {
     private readonly request: IncomingMessage;
@@ -11,13 +12,14 @@ class FishParse {
     private readonly body: any;
     private templateEngine: TemplateBase;
     private config: ListenerConfig;
-    constructor(req: IncomingMessage, res: ServerResponse, sqlConnect: DbBase, body_: any, config: ListenerConfig) {
+    private session: SessionController;
+    constructor(req: IncomingMessage, res: ServerResponse, sqlConnect: DbBase, body_: any, config: ListenerConfig, Session: SessionController) {
         this.request = req;
         this.response = res;
         this.sqlConnect = sqlConnect;
         this.body = body_;
         this.config = config;
-
+        this.session = Session;
     }
 
     public parse = () => {
@@ -32,7 +34,8 @@ class FishParse {
             sql: this.sqlConnect,
             httpReq: this.request,
             httpRes: this.response,
-            templateEngine: this.templateEngine
+            templateEngine: this.templateEngine,
+            session: this.session
         };
         return parseObject;
     }
