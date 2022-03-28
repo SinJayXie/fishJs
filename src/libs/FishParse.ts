@@ -12,7 +12,7 @@ class FishParse {
     private readonly body: any;
     private templateEngine: TemplateBase;
     private config: ListenerConfig;
-    private session: SessionController;
+    private readonly session: SessionController;
     constructor(req: IncomingMessage, res: ServerResponse, sqlConnect: DbBase, body_: any, config: ListenerConfig, Session: SessionController) {
         this.request = req;
         this.response = res;

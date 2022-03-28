@@ -42,6 +42,9 @@ class Session {
         this.load();
     }
 
+    /**
+     * Load session on local file data
+     */
     public load = () => {
         try {
             if(fs.existsSync(tempDir)) {
@@ -55,6 +58,11 @@ class Session {
         }
     }
 
+    /**
+     * New client join server, send session uuid to client.
+     * @param req
+     * @param res
+     */
     public create = (req: IncomingMessage,res: ServerResponse) => {
         const cookies = getCookie(req.headers.cookie);
         if(this.clientSession.has(cookies.FISH_session)) {
@@ -88,6 +96,9 @@ class Session {
 
     }
 
+    /**
+     * Save session to local file, can next load
+     */
     public save = () => {
         const buffer: any = {};
         const sessionKey = this.clientSession.keys();
@@ -101,20 +112,36 @@ class Session {
 
 }
 
+/**
+ * Session Controller
+ */
 class SessionController {
     private session: SessionData;
     constructor(data: SessionData) {
         this.session = data;
     }
 
+    /**
+     * Set
+     * @param key
+     * @param value
+     */
     public setSession = (key: string, value: any) => {
         this.session.options[key] = value;
     }
 
+    /**
+     * Get
+     * @param key
+     */
     public getSession = (key: string) => {
         return this.session.options[key] || undefined;
     }
 
+    /**
+     * Remove
+     * @param key
+     */
     public removeSession = (key: string) => {
         delete this.session.options[key];
     }
