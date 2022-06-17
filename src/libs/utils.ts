@@ -1,4 +1,24 @@
 import { ServerResponse } from 'http';
+import * as zlib from 'zlib';
+
+const compress = function (source: any, type: string) {
+    const compress = type === 'gzip' ? zlib.createGzip() : zlib.createDeflate();
+    compress.write(source);
+    compress.end();
+
+    return new Promise((resolve, reject) => {
+        const data: any[] = [];
+        compress.on('data',(chunk) => {
+            data.push(chunk);
+        });
+        compress.on('end', () => {
+            resolve(Buffer.concat(data));
+        });
+        compress.on('error', (err) => {
+            reject(err);
+        });
+    });
+};
 
 const ConversionBuffer = function (data: any) {
     let conversionData: any = null;
@@ -59,5 +79,6 @@ const writeError = function (res: ServerResponse, code: number ,text: string) {
 export {
     ConversionBuffer,
     getRoute,
-    writeError
+    writeError,
+    compress
 };

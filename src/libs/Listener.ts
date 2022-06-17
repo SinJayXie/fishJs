@@ -4,7 +4,7 @@ import ControllerManage from './ControllerManage';
 import * as http from 'http';
 import * as https from 'https';
 import FishParse from './FishParse';
-import { ConversionBuffer, getRoute, writeError } from './utils';
+import { ConversionBuffer, getRoute, writeError, compress } from './utils';
 import DbBase from './DbBase';
 import { SqlConnectConfig } from '../config/DbConfig';
 import BodyParser from './BodyParser';
@@ -21,7 +21,7 @@ class Listener {
     constructor() {
         this.LOG = new LogController('FishJs');
         this.DBConnect = new DbBase(SqlConnectConfig);
-        this.Session = new Session({ expire: 1 * 60 * 1000 });
+        this.Session = new Session({ expire: 30 * 60 * 1000 });
     }
 
     public app = async (req: http.IncomingMessage, res: http.ServerResponse) => {
@@ -43,7 +43,21 @@ class Listener {
                 }
                 const responseBuffer = ConversionBuffer(await func());
                 if(responseBuffer === '__wait_process__') return;
-                res.write(responseBuffer);
+                const encoding = req.headers['accept-encoding'];
+                if(encoding.indexOf('gzip') !=-1) {
+                    res.setHeader('Content-Encoding', 'gzip');
+                    const compressBuffer: any = await compress(responseBuffer, 'gzip');
+                    res.setHeader('Content-Length', compressBuffer.length);
+                    res.write(compressBuffer);
+                } else if(encoding.indexOf('deflate') !=-1) {
+                    res.setHeader('Content-Encoding', 'deflate');
+                    const compressBuffer: any = await compress(responseBuffer, 'deflate');
+                    res.setHeader('Content-Length', compressBuffer.length);
+                    res.write(compressBuffer);
+                } else {
+                    res.write(responseBuffer);
+                }
+
                 res.end();
             } else {
                 writeError(res, 404, 'No route found'); // throw no match router

@@ -18,22 +18,45 @@ class R {
         }
     }
 
+    /**
+     * Render ejs template html
+     * @param data
+     */
     public render = async (data: Data) => {
         this.setHeader('Content-Type', 'text/html; charset=utf-8');
         return await this.fishBase.templateEngine.render(data, this.fishBase.httpRes);
     }
 
+    /**
+     * wait process
+     */
     public wait = () => {
         return '__wait_process__';
     }
+
+    /**
+     * Get request body
+     */
     public body = () => {
         return this.fishBase.body;
     }
+
+    /**
+     * Set Http method GET,POST,PUT,DELETE...more
+     * @param method
+     */
     public setMethod = (method: string) => {
-        if(this.fishBase.method.toLocaleUpperCase() !== method.toUpperCase()) {
+        if(this.fishBase.method.toUpperCase() !== method.toUpperCase()) {
             throw Error(`Not arrow method '${this.fishBase.method}'`);
         }
     }
+
+    /**
+     * Send file to client
+     * @param downPath
+     * @param fileName
+     * @param readOption
+     */
     public sendFile = (downPath: string, fileName: string, readOption: CreateReadStreamOptions) => {
         if(fs.existsSync(downPath)) {
             const stat = fs.statSync(downPath);
@@ -61,24 +84,58 @@ class R {
             return this.fail(404, 'File not found');
         }
     }
+
+    /**
+     * Socket stream write
+     * @param chunk
+     */
     public write = (chunk: any) => {
         this.fishBase.httpRes.write(chunk);
     }
+
+    /**
+     * Socket stream disconnect
+     */
     public end = () => {
         this.fishBase.httpRes.end();
     }
+
+    /**
+     * Set response headers
+     * @param key
+     * @param value
+     */
     public setHeader = (key: string, value: string) => {
         this.fishBase.httpRes.setHeader(key, value);
     }
+
+    /**
+     * Set http status code
+     * @param code
+     */
     public setStatusCode = (code: number) => {
         this.fishBase.httpRes.statusCode = code;
     }
+
+    /**
+     * Set client cookies
+     * @param name
+     * @param value
+     */
     public setCookie = (name: string, value: string) => {
         this.setHeader('Set-Cookie', `${name}=${value}`);
     }
+
+    /**
+     * Get request header
+     */
     public getHeader = () => {
         return this.fishBase.httpReq.headers;
     }
+
+    /**
+     * Get request cookies
+     */
     public getCookie = () => {
         const Cookies: any = {};
         if (this.fishBase.httpReq.headers.cookie != null) {
@@ -89,21 +146,40 @@ class R {
         }
         return Cookies;
     }
+
+    /**
+     * Get url query params
+     * @param name
+     */
     public getQuery = (name: string) => {
         return this.fishBase.query[name] || false;
     }
+
+    /**
+     * Returns success data
+     * @param data
+     */
     public success = (data: any) => {
         return {
             code: 200,
             data,
             msg: 'ok',
+            success: true,
             time: Date.now()
         };
     }
+
+    /**
+     * Returns fail data
+     * @param code
+     * @param msg
+     */
     public fail = (code: number ,msg: string) => {
+        this.setStatusCode(code);
         return {
             code,
             msg,
+            success: false,
             time: Date.now()
         };
     }
